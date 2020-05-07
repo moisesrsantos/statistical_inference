@@ -1,0 +1,105 @@
+---
+title: "Statistical Inference Project Part 2"
+author: "Moisés R. Santos"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Basic inferential data analysis
+
+## Purpose
+
+Now in the second portion of the project, we're going to analyze the ToothGrowth data in the R datasets package.
+
+
+### Load library
+
+```{r, warning = F, message = F}
+library("dplyr")
+library("ggplot2")
+library("patchwork")
+```
+
+### Load the ToothGrowth data and perform some basic exploratory data analyses
+
+```{r}
+data("ToothGrowth")
+
+head(ToothGrowth)
+```
+
+
+```{r}
+str(ToothGrowth)
+```
+
+```{r}
+summary(ToothGrowth)
+```
+
+
+
+
+
+### Provide a basic summary of the data.
+
+```{r}
+g_len_by_supp <- ggplot(ToothGrowth, aes(supp, len)) + 
+  geom_boxplot(aes(fill = supp), show.legend = F) +
+  xlab('Supplement type') +
+  ylab('Tooth length (mm)') +
+  ggtitle('Tooth length by supplement type')
+
+g_len_by_dose <- ggplot(ToothGrowth, aes(factor(dose), len)) + 
+  geom_boxplot(aes(fill = supp)) +
+  xlab('Dose (mg)') +
+  ylab('Tooth length (mm)') +
+  ggtitle('Tooth length by dose level and supplement type')
+
+(g_len_by_supp | g_len_by_dose)
+```
+
+
+### Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose.
+
+
+First, let's check if there is a significant difference between the 2 types of supplements: orange juice and vitamin C. In this t test, it was considered that the variances are different. 95% confidence was considered.
+
+```{r}
+t_diff_supp <- t.test(len ~ supp, ToothGrowth, var.equal = FALSE)
+t_diff_supp
+```
+As can be seen, considering 95% confidence the null hypothesis cannot be rejected, since the p-value is greater than 0.05. So we have no evidence that there is a significant difference between the two supplements.
+
+
+Now, let's see if there is a significant difference between supplements at different dosages.
+
+#### dosage = 0.5
+
+```{r}
+t_diff_supp_0.5 <- t.test(len ~ supp, data = subset(ToothGrowth, dose == 0.5))
+t_diff_supp_0.5
+```
+#### dosage = 1
+
+```{r}
+t_diff_supp_1 <- t.test(len ~ supp, data = subset(ToothGrowth, dose == 1))
+t_diff_supp_1
+```
+
+
+#### dosage = 2
+
+```{r}
+t_diff_supp_2 <- t.test(len ~ supp, data = subset(ToothGrowth, dose == 2))
+t_diff_supp_2
+```
+
+### Conclusions
+
+Considering 95% confidence, from the t-tests it was possible to conclude that in general there is no significant difference between the different supplements. However, when analyzing the dosage level, there is a significant difference for 0.5 and 1 mg. It is not possible to say that for 2 mg the supplements have different growth. p-value <0.05 was considered relevant.

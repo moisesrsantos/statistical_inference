@@ -1,0 +1,85 @@
+---
+title: "Statistical Inference Project Part 1"
+author: "Moisés R. Santos"
+#date: "05/05/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Purpose
+
+In this project you will investigate the exponential distribution in R and compare it with the Central Limit Theorem. The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. Set lambda = 0.2 for all of the simulations. You will investigate the distribution of averages of 40 exponentials. Note that you will need to do a thousand simulations.
+
+
+## Simulations
+
+
+```{r}
+
+set.seed(42) # seed for reproductibility
+lambda <- 0.2
+n <- 40 # number of exponentials
+sim <- 1000 # number of simulations
+
+mns = NULL
+for (i in 1 : 1000) mns = c(mns, mean(rexp(n, lambda)))
+hist(mns)
+
+```
+
+As can be seen in the histogram, this distribution is close to normal distribution.
+
+## Sample Mean versus Theoretical Mean
+
+The mean $\mu$ of a exponential distribution of rate $\lambda$ is $\mu = \frac{1}{\lambda}$, therefore
+
+
+```{r}
+mu = 1/lambda
+mu
+```
+
+Since the sample mean of the 1000 simulations, we have shown that expected mean is close to sample mean.
+
+```{r}
+mean(mns)
+```
+
+
+## Sample Variance versus Theoretical Variance
+
+The variance $Var$ of a exponential distribution of rate $\lambda$ is $Var = \sigma^2 = \frac{\mu^2}{n}$, therefore
+
+
+```{r}
+Var = mu^2/n
+Var
+```
+
+Since the sample variance of the 1000 simulations, we have shown that expected variance is close to sample variance.
+
+```{r}
+var(mns)
+```
+
+
+
+## Distribution
+
+Comparison of a normal distribution with mean $\mu= \lambda$ and standard deviation = $ \frac{\mu}{\sqrt{n}}$ with the simulations density plot. In green, we have the normal distribution and in red the density of the simulations histogram.
+
+
+```{r}
+hist(mns, freq = FALSE, col="blue", xlab = "Simulation Mean", ylab = "Frequency", main = "Histogram of distribution")
+curve(dnorm(x, mean=lambda^-1, sd=(lambda*sqrt(n))^-1), add=TRUE, col='green', lwd=2)
+lines(density(mns),col="red",lwd=2)
+```
+
+As a result, we have that the density of the simulations approaches the normal curve with the theoretical values.
+
+
